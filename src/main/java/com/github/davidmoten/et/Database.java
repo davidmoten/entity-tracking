@@ -9,6 +9,7 @@ import com.github.davidmoten.geo.GeoHash;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
@@ -85,9 +86,22 @@ public class Database {
 		Coverage coverage = GeoHash.coverBoundingBox(topLeftLat, topLeftLon,
 				bottomRightLat, bottomRightLon);
 		for (String hash : coverage.getHashes()) {
-
+			filter = CompositeFilterOperator.and(filter, new FilterPredicate(
+					"geohash" + hash.length(), FilterOperator.EQUAL, hash));
+		}
+		if (idName != null && idValue != null) {
+			filter = CompositeFilterOperator.and(filter, new FilterPredicate(
+					idName, FilterOperator.EQUAL, idValue));
 		}
 		Query query = new Query("Report").setFilter(filter);
+		FetchOptions options = FetchOptions.Builder.withChunkSize(1000);
+		Iterable<Entity> it = datastore.prepare(query).asIterable(options);
+
 		// filter results within bounding box because geohash query inexact.
+		return toJSON(it);
+	}
+
+	private String toJSON(Iterable<Entity> it) {
+		return "";
 	}
 }
