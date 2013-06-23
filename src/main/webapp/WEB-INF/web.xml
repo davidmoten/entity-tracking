@@ -31,17 +31,6 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>load</servlet-name>
-		<jsp-file>/load.jsp</jsp-file>
-	</servlet>
-	
-	
-	<servlet-mapping>
-		<servlet-name>load</servlet-name>
-		<url-pattern>/load</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
 		<servlet-name>command</servlet-name>
 		<servlet-class>com.github.davidmoten.timesheet.CommandServlet</servlet-class>
 	</servlet>

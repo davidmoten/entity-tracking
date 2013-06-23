@@ -4,15 +4,21 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.github.davidmoten.geo.Coverage;
+import com.github.davidmoten.geo.GeoHash;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.common.base.Preconditions;
 
 /**
  * Encapsulates database access. GoogleAppEngine (BigTable) used for
@@ -33,9 +39,8 @@ public class Database {
 		return userService.getCurrentUser();
 	}
 
-	public void saveReport(String id, Date time, double lat, double lon,
+	public void saveReport(Date time, double lat, double lon,
 			Map<String, String> ids) {
-		Preconditions.checkNotNull(id);
 
 		User user = getUser();
 
@@ -44,19 +49,45 @@ public class Database {
 				"EntityTracking");
 		// kind=table,entity=row
 		Entity report = new Entity("Report", entityTrackingKey);
-		report.setProperty("id", id);
 		report.setProperty("user", user);
 		report.setProperty("lat", lat);
 		report.setProperty("lon", lon);
-		for (Entry<String, String> en : ids.entrySet()) {
-			report.setProperty(en.getKey(), en.getValue());
+		report.setProperty("time", time);
+		// set ids
+		for (Entry<String, String> entry : ids.entrySet()) {
+			report.setProperty(entry.getKey(), entry.getValue());
+		}
+		// set geohashes
+		for (int i = 1; i <= 12; i++) {
+			report.setProperty("geohash" + i, GeoHash.encodeHash(lat, lon, i));
 		}
 
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		datastore.put(report);
 		System.out.println("saved");
-
 	}
 
+	public String getReports(String user, double topLeftLat, double topLeftLon,
+			double bottomRightLat, double bottomRightLon, Date start,
+			Date finish, String idName, String idValue) {
+
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Filter startTimeFilter = new FilterPredicate("time",
+				FilterOperator.GREATER_THAN_OR_EQUAL, start);
+		Filter finishTimeFilter = new FilterPredicate("time",
+				FilterOperator.GREATER_THAN_OR_EQUAL, finish);
+		Filter userFilter = new FilterPredicate("user", FilterOperator.EQUAL,
+				user);
+		Filter filter = CompositeFilterOperator.and(userFilter,
+				startTimeFilter, finishTimeFilter);
+		Coverage coverage = GeoHash.coverBoundingBox(topLeftLat, topLeftLon,
+				bottomRightLat, bottomRightLon);
+		for (String hash : coverage.getHashes()) {
+
+		}
+		Query query = new Query("Report").setFilter(filter);
+		// filter results within bounding box because geohash query inexact.
+	}
 }

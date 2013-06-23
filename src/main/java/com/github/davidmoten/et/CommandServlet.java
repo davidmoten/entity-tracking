@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -52,7 +51,7 @@ public class CommandServlet extends HttpServlet {
 		for (int i = 1; i <= idCount; i++) {
 			ids.put(req.getParameter("idn" + i), req.getParameter("idv" + i));
 		}
-		db.saveReport(UUID.randomUUID().toString(), time, lat, lon, ids);
+		db.saveReport(time, lat, lon, ids);
 	}
 
 	private void getVersion(HttpServletResponse resp) {
