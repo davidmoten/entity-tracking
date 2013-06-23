@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.common.collect.Maps;
 
 /**
  * General purpose servlet. Doesn't really offer the richness of a formal REST
@@ -40,8 +44,15 @@ public class CommandServlet extends HttpServlet {
 	}
 
 	private void saveReport(HttpServletRequest req) {
-		// TODO Auto-generated method stub
-
+		Date time = parseDate(req.getParameter("time"));
+		double lat = Double.parseDouble(req.getParameter("lat"));
+		double lon = Double.parseDouble(req.getParameter("lon"));
+		int idCount = Integer.parseInt(req.getParameter("idc"));
+		Map<String, String> ids = Maps.newHashMap();
+		for (int i = 1; i <= idCount; i++) {
+			ids.put(req.getParameter("idn" + i), req.getParameter("idv" + i));
+		}
+		db.saveReport(UUID.randomUUID().toString(), time, lat, lon, ids);
 	}
 
 	private void getVersion(HttpServletResponse resp) {
