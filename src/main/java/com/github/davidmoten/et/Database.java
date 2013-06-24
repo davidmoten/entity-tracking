@@ -7,9 +7,12 @@ import static com.google.appengine.api.datastore.Query.FilterOperator.GREATER_TH
 import static com.google.appengine.api.datastore.Query.FilterOperator.LESS_THAN;
 
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 
 import com.github.davidmoten.geo.Coverage;
 import com.github.davidmoten.geo.GeoHash;
@@ -120,19 +123,30 @@ public class Database {
 			if (!first) {
 				out.println(",");
 			}
+			out.print("{");
 			boolean firstEntry = true;
 			for (Entry<String, Object> entry : ent.getProperties().entrySet()) {
 				String key = entry.getKey();
 				Object value = entry.getValue();
 				if (!firstEntry)
 					out.print(",");
-				out.print("\"" + key + "\":\"" + value + "\"");
+				if (value instanceof Date) {
+					DateFormat df = new SimpleDateFormat(
+							"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+					df.setTimeZone(TimeZone.getTimeZone("UTC"));
+					out.print("\"" + key + "\":\"" + df.format((Date) value)
+							+ "\"");
+				} else if (value instanceof Number)
+					out.print("\"" + key + "\":" + value + "");
+				else
+					out.print("\"" + key + "\":\"" + value + "\"");
 				firstEntry = false;
 			}
-
+			out.print("}");
 			first = false;
 		}
 		out.println("]}");
+		out.flush();
 	}
 
 	private static Predicate<Entity> createBoundingBoxPredicate(
