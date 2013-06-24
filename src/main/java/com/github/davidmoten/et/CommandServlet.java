@@ -1,8 +1,6 @@
 package com.github.davidmoten.et;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -52,8 +50,8 @@ public class CommandServlet extends HttpServlet {
 				.getParameter("bottomRightLat"));
 		double bottomRightLon = Double.parseDouble(req
 				.getParameter("bottomRightLon"));
-		Date start = parseDate(req.getParameter("start"));
-		Date finish = parseDate(req.getParameter("finish"));
+		Date start = Util.parseIsoDate(req.getParameter("start"));
+		Date finish = Util.parseIsoDate(req.getParameter("finish"));
 		String idName = req.getParameter("idName");
 		String idValue = req.getParameter("idValue");
 		resp.setContentType("application/json");
@@ -68,7 +66,7 @@ public class CommandServlet extends HttpServlet {
 	}
 
 	private void saveReport(HttpServletRequest req) {
-		Date time = parseDate(req.getParameter("time"));
+		Date time = Util.parseIsoDate(req.getParameter("time"));
 		double lat = Double.parseDouble(req.getParameter("lat"));
 		double lon = Double.parseDouble(req.getParameter("lon"));
 		int idCount = Integer.parseInt(req.getParameter("idc"));
@@ -90,25 +88,6 @@ public class CommandServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-
-	}
-
-	/**
-	 * Returns the {@link Date} from a date string in format yyyy-MM-dd-HH-mm.
-	 * Date string is assumed to be in UTC time zone.
-	 * 
-	 * @param date
-	 * @return
-	 */
-	private Date parseDate(String date) {
-
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				"yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-		try {
-			return sdf.parse(date);
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
 
 	}
 
