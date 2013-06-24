@@ -1,11 +1,8 @@
 package com.github.davidmoten.et;
 
-import static java.util.concurrent.TimeUnit.HOURS;
-
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -50,13 +47,6 @@ public class DatabaseTest {
 	@Test
 	public void testGetReports() {
 		Database db = new Database();
-		long now = System.currentTimeMillis();
-		Map<String, String> ids = Maps.newHashMap();
-		ids.put("mmsi", "12345678");
-		db.saveReport(new Date(now - TimeUnit.MINUTES.toMillis(5)), -2, 137,
-				ids);
-		db.writeReportsAsJson(10.0, 135.0, -10.0, 145.0,
-				new Date(now - HOURS.toMillis(1)), new Date(), null, null,
-				new PrintWriter(System.out));
+		db.systemIntegrationTest(new PrintWriter(System.out));
 	}
 }

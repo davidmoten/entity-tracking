@@ -5,6 +5,7 @@ import static com.google.appengine.api.datastore.Query.CompositeFilterOperator.a
 import static com.google.appengine.api.datastore.Query.FilterOperator.EQUAL;
 import static com.google.appengine.api.datastore.Query.FilterOperator.GREATER_THAN_OR_EQUAL;
 import static com.google.appengine.api.datastore.Query.FilterOperator.LESS_THAN;
+import static java.util.concurrent.TimeUnit.HOURS;
 
 import java.io.PrintWriter;
 import java.text.DateFormat;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import com.github.davidmoten.geo.Coverage;
 import com.github.davidmoten.geo.GeoHash;
@@ -33,6 +35,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /**
  * Encapsulates database access. GoogleAppEngine (BigTable) used for
@@ -179,6 +182,18 @@ public class Database {
 			return longitudeBetween(a, b + 360, c);
 		else
 			return a <= c && c <= b;
+	}
+
+	public void systemIntegrationTest(PrintWriter out) {
+		long now = System.currentTimeMillis();
+		for (int i = 0; i < 100; i++) {
+			Map<String, String> ids = Maps.newHashMap();
+			ids.put("mmsi", "12345678");
+			saveReport(new Date(now - TimeUnit.MINUTES.toMillis(5)), -2, 137,
+					ids);
+		}
+		writeReportsAsJson(10.0, 135.0, -10.0, 145.0,
+				new Date(now - HOURS.toMillis(1)), new Date(), null, null, out);
 	}
 
 }

@@ -23,6 +23,7 @@ public class CommandServlet extends HttpServlet {
 	private static final String COMMAND_SAVE_REPORT = "saveReport";
 	private static final String COMMAND_GET_VERSION = "getVersion";
 	private static final String COMMAND_GET_REPORTS = "getReports";
+	private static final String COMMAND_TEST = "test";
 
 	private static final long serialVersionUID = 8026282588720357161L;
 
@@ -39,8 +40,18 @@ public class CommandServlet extends HttpServlet {
 			getVersion(resp);
 		else if (COMMAND_GET_REPORTS.equals(command))
 			getReports(req, resp);
+		else if (COMMAND_TEST.equals(command))
+			systemIntegrationTest(resp);
 		else
 			throw new RuntimeException("unknown command: " + command);
+	}
+
+	private void systemIntegrationTest(HttpServletResponse resp) {
+		try {
+			db.systemIntegrationTest(resp.getWriter());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void getReports(HttpServletRequest req, HttpServletResponse resp) {
