@@ -6,7 +6,7 @@ import static com.google.appengine.api.datastore.Query.FilterOperator.EQUAL;
 import static com.google.appengine.api.datastore.Query.FilterOperator.GREATER_THAN_OR_EQUAL;
 import static com.google.appengine.api.datastore.Query.FilterOperator.LESS_THAN;
 
-import java.io.Writer;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -66,7 +66,7 @@ public class Database {
 			report.setProperty(entry.getKey(), entry.getValue());
 		}
 		// set geohashes
-		for (int i = 1; i <= 12; i++) {
+		for (int i = 1; i <= GeoHash.MAX_HASH_LENGTH; i++) {
 			report.setProperty("geohash" + i, GeoHash.encodeHash(lat, lon, i));
 		}
 
@@ -79,7 +79,7 @@ public class Database {
 	public void writeReportsAsJson(String user, final double topLeftLat,
 			final double topLeftLon, final double bottomRightLat,
 			final double bottomRightLon, Date start, Date finish,
-			String idName, String idValue, Writer out) {
+			String idName, String idValue, PrintWriter out) {
 
 		DatastoreService datastore = getDatastoreService();
 		Filter startTimeFilter = new FilterPredicate("time",
@@ -109,8 +109,9 @@ public class Database {
 		writeReportsAsJson(it, out);
 	}
 
-	private void writeReportsAsJson(Iterable<Entity> it, Writer out) {
+	private void writeReportsAsJson(Iterable<Entity> it, PrintWriter out) {
 		// TODO
+		out.println("{}");
 	}
 
 	private static Predicate<Entity> createBoundingBoxPredicate(
