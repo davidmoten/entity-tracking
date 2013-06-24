@@ -82,7 +82,6 @@ public class Database {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		datastore.put(report);
-		System.out.println("saved");
 	}
 
 	public void writeReportsAsJson(final double topLeftLat,
@@ -186,7 +185,7 @@ public class Database {
 
 	public void systemIntegrationTest(PrintWriter out) {
 		long now = System.currentTimeMillis();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10; i++) {
 			Map<String, String> ids = Maps.newHashMap();
 			ids.put("mmsi", "12345678");
 			saveReport(new Date(now - TimeUnit.MINUTES.toMillis(5)), -2, 137,

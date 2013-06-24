@@ -2,13 +2,65 @@
 <datastore-indexes
   autoGenerate="true">
   <!-- 
-    <datastore-index kind="Entry" ancestor="false" source="manual">
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash1" direction="asc"/>
         <property name="user" direction="asc"/>
-        <property name="startTime" direction="asc"/>
+        <property name="time" direction="asc"/>
     </datastore-index>
-    <datastore-index kind="Setting" ancestor="false" source="manual">
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash2" direction="asc"/>
         <property name="user" direction="asc"/>
-        <property name="key" direction="asc"/>
+        <property name="time" direction="asc"/>
     </datastore-index>
-     -->
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash3" direction="asc"/>
+        <property name="user" direction="asc"/>
+        <property name="time" direction="asc"/>
+    </datastore-index>
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash4" direction="asc"/>
+        <property name="user" direction="asc"/>
+        <property name="time" direction="asc"/>
+    </datastore-index>
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash5" direction="asc"/>
+        <property name="user" direction="asc"/>
+        <property name="time" direction="asc"/>
+    </datastore-index>
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash6" direction="asc"/>
+        <property name="user" direction="asc"/>
+        <property name="time" direction="asc"/>
+    </datastore-index>
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash7" direction="asc"/>
+        <property name="user" direction="asc"/>
+        <property name="time" direction="asc"/>
+    </datastore-index>
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash8" direction="asc"/>
+        <property name="user" direction="asc"/>
+        <property name="time" direction="asc"/>
+    </datastore-index>
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash9" direction="asc"/>
+        <property name="user" direction="asc"/>
+        <property name="time" direction="asc"/>
+    </datastore-index>
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash10" direction="asc"/>
+        <property name="user" direction="asc"/>
+        <property name="time" direction="asc"/>
+    </datastore-index>
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash11" direction="asc"/>
+        <property name="user" direction="asc"/>
+        <property name="time" direction="asc"/>
+    </datastore-index>
+     <datastore-index kind="Report" ancestor="false" source="auto">
+        <property name="geohash12" direction="asc"/>
+        <property name="user" direction="asc"/>
+        <property name="time" direction="asc"/>
+    </datastore-index>
+    -->
 </datastore-indexes>
