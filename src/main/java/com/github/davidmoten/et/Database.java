@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.User;
@@ -85,8 +86,8 @@ public class Database {
 			final double topLeftLon, final double bottomRightLat,
 			final double bottomRightLon, Date start, Date finish,
 			String idName, String idValue, PrintWriter out) {
-
 		User user = getUser();
+
 		DatastoreService datastore = getDatastoreService();
 		Filter startTimeFilter = new FilterPredicate("time",
 				GREATER_THAN_OR_EQUAL, start);
@@ -95,10 +96,16 @@ public class Database {
 		Filter filter = and(userFilter, startTimeFilter, finishTimeFilter);
 		Coverage coverage = GeoHash.coverBoundingBox(topLeftLat, topLeftLon,
 				bottomRightLat, bottomRightLon);
+		Filter hashFilter = null;
 		for (String hash : coverage.getHashes()) {
-			filter = and(filter, new FilterPredicate("geohash" + hash.length(),
-					EQUAL, hash));
+			FilterPredicate f = new FilterPredicate("geohash" + hash.length(),
+					EQUAL, hash);
+			if (hashFilter == null)
+				hashFilter = f;
+			else
+				hashFilter = CompositeFilterOperator.or(hashFilter, f);
 		}
+		filter = and(filter, hashFilter);
 		if (idName != null && idValue != null) {
 			filter = and(filter, new FilterPredicate(idName, EQUAL, idValue));
 		}
