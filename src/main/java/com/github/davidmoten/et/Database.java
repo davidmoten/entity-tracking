@@ -110,8 +110,20 @@ public class Database {
 	}
 
 	private void writeReportsAsJson(Iterable<Entity> it, PrintWriter out) {
-		// TODO
-		out.println("{}");
+		out.println("{ \"reports\" :[");
+		boolean first = true;
+		for (Entity ent : it) {
+			for (Entry<String, Object> entry : ent.getProperties().entrySet()) {
+				String key = entry.getKey();
+				Object value = entry.getValue();
+				if (first)
+					out.print(",");
+				if ("time".equals(key))
+					out.println("\"time\":\"" + value + "\"");
+				first = false;
+			}
+		}
+		out.println("]}");
 	}
 
 	private static Predicate<Entity> createBoundingBoxPredicate(
