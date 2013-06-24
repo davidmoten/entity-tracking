@@ -117,13 +117,13 @@ public class Database {
 	@VisibleForTesting
 	static void writeReportsAsJson(Iterable<? extends PropertyContainer> it,
 			PrintWriter out) {
-		out.println("{ \"reports\" :[\n");
+		out.println("{ \"reports\" :[");
 		boolean first = true;
 		for (PropertyContainer ent : it) {
 			if (!first) {
 				out.println(",");
 			}
-			out.print("{");
+			out.print("  {");
 			boolean firstEntry = true;
 			for (Entry<String, Object> entry : ent.getProperties().entrySet()) {
 				String key = entry.getKey();
