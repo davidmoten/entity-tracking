@@ -19,12 +19,14 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -109,19 +111,26 @@ public class Database {
 		writeReportsAsJson(it, out);
 	}
 
-	private void writeReportsAsJson(Iterable<Entity> it, PrintWriter out) {
-		out.println("{ \"reports\" :[");
+	@VisibleForTesting
+	static void writeReportsAsJson(Iterable<? extends PropertyContainer> it,
+			PrintWriter out) {
+		out.println("{ \"reports\" :[\n");
 		boolean first = true;
-		for (Entity ent : it) {
+		for (PropertyContainer ent : it) {
+			if (!first) {
+				out.println(",");
+			}
+			boolean firstEntry = true;
 			for (Entry<String, Object> entry : ent.getProperties().entrySet()) {
 				String key = entry.getKey();
 				Object value = entry.getValue();
-				if (first)
+				if (!firstEntry)
 					out.print(",");
-				if ("time".equals(key))
-					out.println("\"time\":\"" + value + "\"");
-				first = false;
+				out.print("\"" + key + "\":\"" + value + "\"");
+				firstEntry = false;
 			}
+
+			first = false;
 		}
 		out.println("]}");
 	}
