@@ -81,11 +81,12 @@ public class Database {
 		System.out.println("saved");
 	}
 
-	public void writeReportsAsJson(String user, final double topLeftLat,
+	public void writeReportsAsJson(final double topLeftLat,
 			final double topLeftLon, final double bottomRightLat,
 			final double bottomRightLon, Date start, Date finish,
 			String idName, String idValue, PrintWriter out) {
 
+		User user = getUser();
 		DatastoreService datastore = getDatastoreService();
 		Filter startTimeFilter = new FilterPredicate("time",
 				GREATER_THAN_OR_EQUAL, start);

@@ -23,7 +23,8 @@ import com.google.common.collect.Maps;
 public class CommandServlet extends HttpServlet {
 
 	private static final String COMMAND_SAVE_REPORT = "saveReport";
-	private static final Object COMMAND_GET_VERSION = "getVersion";
+	private static final String COMMAND_GET_VERSION = "getVersion";
+	private static final String COMMAND_GET_REPORTS = "getReports";
 
 	private static final long serialVersionUID = 8026282588720357161L;
 
@@ -38,8 +39,32 @@ public class CommandServlet extends HttpServlet {
 			saveReport(req);
 		else if (COMMAND_GET_VERSION.equals(command))
 			getVersion(resp);
+		else if (COMMAND_GET_REPORTS.equals(command))
+			getReports(req, resp);
 		else
 			throw new RuntimeException("unknown command: " + command);
+	}
+
+	private void getReports(HttpServletRequest req, HttpServletResponse resp) {
+		double topLeftLat = Double.parseDouble(req.getParameter("topLeftLat"));
+		double topLeftLon = Double.parseDouble(req.getParameter("topLeftLon"));
+		double bottomRightLat = Double.parseDouble(req
+				.getParameter("bottomRightLat"));
+		double bottomRightLon = Double.parseDouble(req
+				.getParameter("bottomRightLon"));
+		Date start = parseDate(req.getParameter("start"));
+		Date finish = parseDate(req.getParameter("finish"));
+		String idName = req.getParameter("idName");
+		String idValue = req.getParameter("idValue");
+		resp.setContentType("application/json");
+		try {
+			db.writeReportsAsJson(topLeftLat, topLeftLon, bottomRightLat,
+					bottomRightLon, start, finish, idName, idValue,
+					resp.getWriter());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	private void saveReport(HttpServletRequest req) {
@@ -77,7 +102,7 @@ public class CommandServlet extends HttpServlet {
 	 */
 	private Date parseDate(String date) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-Z");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.SSS-Z");
 		try {
 			return sdf.parse(date + "-UTC");
 		} catch (ParseException e) {
