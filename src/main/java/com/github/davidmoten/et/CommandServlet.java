@@ -102,9 +102,10 @@ public class CommandServlet extends HttpServlet {
 	 */
 	private Date parseDate(String date) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.SSS-Z");
+		SimpleDateFormat sdf = new SimpleDateFormat(
+				"yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		try {
-			return sdf.parse(date + "-UTC");
+			return sdf.parse(date);
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}

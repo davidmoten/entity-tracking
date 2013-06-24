@@ -5,10 +5,10 @@
 
 	<filter>
 		<filter-name>LoginFilter</filter-name>
+		<filter-class>com.github.davidmoten.et.LoginFilter</filter-class>
 		<description>
             Redirects to Google Authentication page if user not authenticated for the current session.
         </description>
-		<filter-class>com.github.davidmoten.timesheet.LoginFilter</filter-class>
 	</filter>
 	
 	<filter-mapping>
@@ -32,7 +32,7 @@
 	
 	<servlet>
 		<servlet-name>command</servlet-name>
-		<servlet-class>com.github.davidmoten.timesheet.CommandServlet</servlet-class>
+		<servlet-class>com.github.davidmoten.et.CommandServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
