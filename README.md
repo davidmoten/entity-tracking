@@ -11,3 +11,15 @@ This is a java webapp configured to deploy to Google AppEngine.
 * executes bounding box queries
 
 Having got this going I let go of the idea of trialling some big datasets in AppEngine because it might be kind of costly. Maybe later.
+
+Run development server
+------------------------
+
+    mvn clean package appengine:devserver
+
+Deploy to appengine
+-----------------------
+
+    mvn clean package appengine:update -Dappengine.app.name=<YOUR_APP_NAME>
+
+
