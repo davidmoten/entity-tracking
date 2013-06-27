@@ -1,5 +1,6 @@
 package com.github.davidmoten.et;
 
+import static com.github.davidmoten.geo.Position.to180;
 import static com.google.appengine.api.datastore.DatastoreServiceFactory.getDatastoreService;
 import static com.google.appengine.api.datastore.Query.CompositeFilterOperator.and;
 import static com.google.appengine.api.datastore.Query.FilterOperator.EQUAL;
@@ -165,9 +166,9 @@ public class Database {
 	}
 
 	private static boolean longitudeBetween(double a, double b, double c) {
-		a = GeoHash.to180(a);
-		b = GeoHash.to180(b);
-		c = GeoHash.to180(c);
+		a = to180(a);
+		b = to180(b);
+		c = to180(c);
 		if (b < a)
 			return longitudeBetween(a, b + 360, c);
 		else
