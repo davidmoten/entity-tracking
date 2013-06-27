@@ -20,5 +20,6 @@ body {
 <body>
 <h3>Entity Tracking</h3>
 <p>Entity tracking services</p>
+<a href="command?command=getReports&topLeftLat=10.0&topLeftLon=135&bottomRightLat=-10&bottomRightLon=145&start=2013-06-01T23:55:21.123Z&finish=2013-06-22T23:55:21.123Z">bounding box test</a>
 </body>
 </html>

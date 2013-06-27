@@ -6,6 +6,7 @@ import static com.google.appengine.api.datastore.Query.CompositeFilterOperator.a
 import static com.google.appengine.api.datastore.Query.FilterOperator.EQUAL;
 import static com.google.appengine.api.datastore.Query.FilterOperator.GREATER_THAN_OR_EQUAL;
 import static com.google.appengine.api.datastore.Query.FilterOperator.LESS_THAN;
+import static java.util.concurrent.TimeUnit.HOURS;
 
 import java.io.PrintWriter;
 import java.text.DateFormat;
@@ -14,6 +15,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import com.github.davidmoten.geo.Coverage;
 import com.github.davidmoten.geo.GeoHash;
@@ -25,6 +27,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.User;
@@ -33,6 +36,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /**
  * Encapsulates database access. GoogleAppEngine (BigTable) used for
@@ -79,15 +83,14 @@ public class Database {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		datastore.put(report);
-		System.out.println("saved");
 	}
 
 	public void writeReportsAsJson(final double topLeftLat,
 			final double topLeftLon, final double bottomRightLat,
 			final double bottomRightLon, Date start, Date finish,
 			String idName, String idValue, PrintWriter out) {
-
 		User user = getUser();
+
 		DatastoreService datastore = getDatastoreService();
 		Filter startTimeFilter = new FilterPredicate("time",
 				GREATER_THAN_OR_EQUAL, start);
@@ -96,10 +99,16 @@ public class Database {
 		Filter filter = and(userFilter, startTimeFilter, finishTimeFilter);
 		Coverage coverage = GeoHash.coverBoundingBox(topLeftLat, topLeftLon,
 				bottomRightLat, bottomRightLon);
+		Filter hashFilter = null;
 		for (String hash : coverage.getHashes()) {
-			filter = and(filter, new FilterPredicate("geohash" + hash.length(),
-					EQUAL, hash));
+			FilterPredicate f = new FilterPredicate("geohash" + hash.length(),
+					EQUAL, hash);
+			if (hashFilter == null)
+				hashFilter = f;
+			else
+				hashFilter = CompositeFilterOperator.or(hashFilter, f);
 		}
+		filter = and(filter, hashFilter);
 		if (idName != null && idValue != null) {
 			filter = and(filter, new FilterPredicate(idName, EQUAL, idValue));
 		}
@@ -173,6 +182,18 @@ public class Database {
 			return longitudeBetween(a, b + 360, c);
 		else
 			return a <= c && c <= b;
+	}
+
+	public void systemIntegrationTest(PrintWriter out) {
+		long now = System.currentTimeMillis();
+		for (int i = 0; i < 10; i++) {
+			Map<String, String> ids = Maps.newHashMap();
+			ids.put("mmsi", "12345678");
+			saveReport(new Date(now - TimeUnit.MINUTES.toMillis(5)), -2, 137,
+					ids);
+		}
+		writeReportsAsJson(10.0, 135.0, -10.0, 145.0,
+				new Date(now - HOURS.toMillis(1)), new Date(), null, null, out);
 	}
 
 }

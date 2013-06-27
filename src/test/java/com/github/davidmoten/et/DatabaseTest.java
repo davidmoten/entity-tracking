@@ -5,9 +5,13 @@ import java.util.Date;
 import java.util.Map;
 
 import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.appengine.api.datastore.PropertyContainer;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -27,4 +31,22 @@ public class DatabaseTest {
 		EasyMock.verify(pc);
 	}
 
+	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
+			new LocalDatastoreServiceTestConfig());
+
+	@Before
+	public void setUp() {
+		helper.setUp();
+	}
+
+	@After
+	public void tearDown() {
+		helper.tearDown();
+	}
+
+	@Test
+	public void testGetReports() {
+		Database db = new Database();
+		db.systemIntegrationTest(new PrintWriter(System.out));
+	}
 }
